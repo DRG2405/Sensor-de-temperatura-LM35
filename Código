@@ -1,0 +1,51 @@
+// Definir el pin analógico donde se conecta el sensor
+#define SENSOR A5
+
+// Definir la tensión de referencia del ADC
+#define VREF 5.0
+
+// Definir el factor de conversión de Voltios a grados Celsius
+#define V2C 100.0
+
+// Variable para almacenar el valor leído del sensor
+int valor;
+
+// Variable para almacenar la temperatura en grados Celsius
+float temperatura;
+
+void setup() {
+  // Inicializar el puerto serie a 9600 baudios
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Leer el valor del sensor
+  valor = analogRead(SENSOR);
+
+  // Convertir el valor a voltios
+  // El ADC tiene una resolución de 10 bits, por lo que el valor está entre 0 y 1023
+  // Para obtener el voltaje, se divide el valor por 1023 y se multiplica por la tensión de referencia
+  float voltaje = valor * VREF / 1023.0;
+
+  // Convertir el voltaje a grados Celsius
+  // El sensor tiene una sensibilidad de 10 mV por grado Celsius, por lo que se divide el voltaje por 0.01
+  // Otra forma de hacerlo es multiplicar el voltaje por 100
+  temperatura = voltaje * V2C;
+
+  // Mostrar la temperatura en el puerto serie
+  Serial.print("Temperatura: ");
+  Serial.print(temperatura);
+  Serial.println(" C");
+
+  // Mostrar un mensaje según el rango de temperatura
+  if (temperatura < 25) {
+    Serial.println("Temperatura baja");
+  } else if (temperatura > 25 && temperatura < 40) {
+    Serial.println("Temperatura normal");
+  } else if (temperatura > 40) {
+    Serial.println("Temperatura alta");
+  }
+
+  // Esperar un segundo antes de repetir el ciclo
+  delay(1000);
+}
